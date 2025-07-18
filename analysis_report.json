@@ -1,0 +1,240 @@
+{
+  "project_overview": {
+    "name": "",
+    "total_files": 10,
+    "python_files": 2,
+    "slurm_scripts": 3,
+    "config_files": 1
+  },
+  "directory_structure": {
+    "root": {
+      "directories": [
+        "docs",
+        "tools",
+        "templates"
+      ],
+      "files": [
+        "README.md"
+      ],
+      "file_count": 1
+    },
+    "docs": {
+      "directories": [],
+      "files": [
+        "slurm_analysis_guide.md",
+        "project_structure.md",
+        "analysis_framework.md"
+      ],
+      "file_count": 3
+    },
+    "tools": {
+      "directories": [],
+      "files": [
+        "analyze_code.py"
+      ],
+      "file_count": 1
+    },
+    "templates": {
+      "directories": [
+        "slurm",
+        "configs",
+        "scripts"
+      ],
+      "files": [],
+      "file_count": 0
+    },
+    "templates/slurm": {
+      "directories": [],
+      "files": [
+        "train_job.sh",
+        "submit_pipeline.sh",
+        "array_hyperopt.sh"
+      ],
+      "file_count": 3
+    },
+    "templates/configs": {
+      "directories": [],
+      "files": [
+        "experiment_config.yaml"
+      ],
+      "file_count": 1
+    },
+    "templates/scripts": {
+      "directories": [],
+      "files": [
+        "train.py"
+      ],
+      "file_count": 1
+    }
+  },
+  "slurm_analysis": {
+    "scripts": [
+      {
+        "file_path": "templates/slurm/train_job.sh",
+        "file_name": "train_job.sh",
+        "sbatch_parameters": {
+          "job-name=conceptGCD_train": true,
+          "output=logs/train_%j.out": true,
+          "error=logs/train_%j.err": true,
+          "time=24:00:00": true,
+          "nodes=1": true,
+          "ntasks-per-node=1": true,
+          "cpus-per-task=8": true,
+          "gres=gpu:v100:1": true,
+          "mem=32G": true,
+          "partition=gpu": true
+        },
+        "resource_analysis": {
+          "cpu_request": "not_specified",
+          "memory_request": "not_specified",
+          "gpu_request": "not_specified",
+          "time_limit": "not_specified",
+          "node_count": "not_specified"
+        },
+        "environment_setup": {
+          "module_loading": true,
+          "conda_environment": true,
+          "environment_variables": true
+        },
+        "script_type": "training_job"
+      },
+      {
+        "file_path": "templates/slurm/submit_pipeline.sh",
+        "file_name": "submit_pipeline.sh",
+        "sbatch_parameters": {},
+        "resource_analysis": {
+          "cpu_request": "not_specified",
+          "memory_request": "not_specified",
+          "gpu_request": "not_specified",
+          "time_limit": "not_specified",
+          "node_count": "not_specified"
+        },
+        "environment_setup": {
+          "module_loading": false,
+          "conda_environment": false,
+          "environment_variables": false
+        },
+        "script_type": "array_job"
+      },
+      {
+        "file_path": "templates/slurm/array_hyperopt.sh",
+        "file_name": "array_hyperopt.sh",
+        "sbatch_parameters": {
+          "job-name=conceptGCD_hyperopt": true,
+          "output=logs/hyperopt_%A_%a.out": true,
+          "error=logs/hyperopt_%A_%a.err": true,
+          "array=1-50": true,
+          "time=12:00:00": true,
+          "nodes=1": true,
+          "ntasks-per-node=1": true,
+          "cpus-per-task=4": true,
+          "gres=gpu:1": true,
+          "mem=16G": true,
+          "partition=gpu": true
+        },
+        "resource_analysis": {
+          "cpu_request": "not_specified",
+          "memory_request": "not_specified",
+          "gpu_request": "not_specified",
+          "time_limit": "not_specified",
+          "node_count": "not_specified"
+        },
+        "environment_setup": {
+          "module_loading": true,
+          "conda_environment": true,
+          "environment_variables": true
+        },
+        "script_type": "array_job"
+      }
+    ],
+    "patterns_found": [
+      "job_dependencies",
+      "array_jobs",
+      "gpu_usage"
+    ]
+  },
+  "python_analysis": {
+    "files": [
+      {
+        "file_path": "tools/analyze_code.py",
+        "file_name": "analyze_code.py",
+        "file_type": "model_definition",
+        "imports": [
+          "json",
+          "dataclasses",
+          "collections",
+          "sys",
+          "re",
+          "yaml",
+          "typing",
+          "pathlib",
+          "os",
+          "argparse"
+        ],
+        "line_count": 442,
+        "code_line_count": 347,
+        "has_main": true,
+        "has_argparse": true,
+        "has_config": true
+      },
+      {
+        "file_path": "templates/scripts/train.py",
+        "file_name": "train.py",
+        "file_type": "training_script",
+        "imports": [
+          "json",
+          "sys",
+          "torch",
+          "yaml",
+          "typing",
+          "pathlib",
+          "os",
+          "logging",
+          "argparse"
+        ],
+        "line_count": 366,
+        "code_line_count": 240,
+        "has_main": true,
+        "has_argparse": true,
+        "has_config": true
+      }
+    ],
+    "common_dependencies": [
+      "json",
+      "collections",
+      "sys",
+      "re",
+      "torch",
+      "yaml",
+      "pathlib",
+      "typing",
+      "dataclasses",
+      "os"
+    ]
+  },
+  "configuration_analysis": {
+    "files": [
+      {
+        "file_path": "templates/configs/experiment_config.yaml",
+        "file_name": "experiment_config.yaml",
+        "config_type": "yaml",
+        "content_summary": {
+          "keys": [
+            "project",
+            "dataset",
+            "model",
+            "training",
+            "concept_gcd",
+            "evaluation",
+            "logging",
+            "system",
+            "checkpoint",
+            "reproducibility"
+          ],
+          "nested_structure": true
+        }
+      }
+    ]
+  },
+  "recommendations": []
+}

@@ -1,0 +1,158 @@
+# ConceptGCD实验配置模板
+# ConceptGCD Experiment Configuration Template
+
+# 项目基本信息
+project:
+  name: "ConceptGCD"
+  description: "Concept-Driven Approach to Generalized Category Discovery"
+  version: "1.0.0"
+
+# 数据集配置
+dataset:
+  name: "cifar100"  # 或 imagenet, cub200, etc.
+  root: "/data/datasets"
+  num_known_classes: 80
+  num_novel_classes: 20
+  
+  # 数据增强
+  augmentation:
+    train:
+      - "RandomResizedCrop"
+      - "RandomHorizontalFlip"
+      - "ColorJitter"
+      - "ToTensor"
+      - "Normalize"
+    test:
+      - "Resize"
+      - "CenterCrop"
+      - "ToTensor"
+      - "Normalize"
+  
+  # 数据加载
+  dataloader:
+    batch_size: 128
+    num_workers: 8
+    pin_memory: true
+    drop_last: true
+
+# 模型配置
+model:
+  # 主干网络
+  backbone:
+    name: "resnet50"
+    pretrained: true
+    freeze_layers: 0
+  
+  # 投影头
+  projection_head:
+    hidden_dim: 2048
+    output_dim: 512
+    num_layers: 2
+    dropout: 0.1
+  
+  # 概念编码器
+  concept_encoder:
+    concept_dim: 256
+    num_concepts: 100
+    attention_heads: 8
+    dropout: 0.1
+
+# 训练配置
+training:
+  # 优化器
+  optimizer:
+    name: "adamw"
+    lr: 0.001
+    weight_decay: 0.0001
+    betas: [0.9, 0.999]
+  
+  # 学习率调度
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 10
+    min_lr: 0.00001
+  
+  # 训练参数
+  epochs: 200
+  warmup_epochs: 10
+  save_freq: 10
+  eval_freq: 5
+  
+  # 损失函数权重
+  loss_weights:
+    supervised_loss: 1.0
+    concept_loss: 0.5
+    discovery_loss: 1.0
+    consistency_loss: 0.3
+
+# 概念驱动的GCD特定配置
+concept_gcd:
+  # 概念学习
+  concept_learning:
+    concept_bank_size: 1000
+    concept_update_freq: 100
+    concept_temperature: 0.1
+  
+  # 新类发现
+  novel_discovery:
+    clustering_algorithm: "kmeans"
+    num_clusters: 20
+    similarity_threshold: 0.8
+    discovery_epochs: [50, 100, 150]
+  
+  # 组合机制
+  composition:
+    composition_method: "attention"
+    max_concepts_per_class: 5
+    composition_temperature: 0.2
+
+# 评估配置
+evaluation:
+  metrics:
+    - "accuracy"
+    - "nmi"
+    - "ari"
+    - "silhouette_score"
+    - "novel_class_accuracy"
+  
+  # K-means聚类评估
+  clustering:
+    n_init: 10
+    max_iter: 300
+    random_state: 42
+
+# 日志和输出配置
+logging:
+  log_level: "INFO"
+  log_freq: 100
+  tensorboard: true
+  wandb:
+    enabled: false
+    project: "conceptGCD"
+    entity: "your_entity"
+
+# 硬件和系统配置
+system:
+  device: "cuda"
+  mixed_precision: true
+  gradient_clip: 1.0
+  find_unused_parameters: false
+  
+  # 分布式训练
+  distributed:
+    enabled: false
+    backend: "nccl"
+    init_method: "env://"
+
+# 检查点和保存
+checkpoint:
+  save_dir: "outputs/checkpoints"
+  save_best: true
+  save_last: true
+  resume_from: null
+  
+# 可复现性
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
